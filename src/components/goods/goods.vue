@@ -1,6 +1,5 @@
 <template>
   <div class="goods">
-
     <div class="meun-wrapper" ref="meunWrapper">
       <ul>
         <li v-for="(item,index) in goods" class="meun-item" :class="{'current':currentIndex===index}"
@@ -17,7 +16,7 @@
         <li v-for="item in goods" class="food-list food-list-hook" :key='item.id'>
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item" :key="food.id">
+            <li @click="selectFood(food)" v-for="food in item.foods" class="food-item" :key="food.id">
               <div class="icon">
                 <img :src="food.icon" alt=""  width="57">
               </div>
@@ -40,6 +39,7 @@
       </ul>
     </div>
     <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <food @add="addFood" :food="selectedFood"  ref="food"></food>
   </div>
 </template>
 
@@ -47,6 +47,8 @@
   import BScroll from 'better-scroll';
   import shopcart from 'components/shopcart/shopcart';
   import cartcontrol from 'components/cartcontrol/cartcontrol';
+  import food from 'components/food/food';
+
   const ERR_OK = 0;
   export default {
     props: {
@@ -58,7 +60,8 @@
       return {
         goods: [],
         listHight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       };
     },
     computed: {
@@ -101,13 +104,14 @@
     },
     methods: {
       selectMenu(index) {
-        // if (!event._constructed) {
-        //   return;
-        // }
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
         let el = foodList[index];
         this.foodsScroll.scrollToElement(el, 300);
         console.log(index);
+      },
+      selectFood(food) {
+        this.selectedFood = food;
+        this.$refs.food.show();
       },
       addFood(target) {
         this._drop(target);
@@ -148,7 +152,8 @@
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food
     }
   };
 </script>

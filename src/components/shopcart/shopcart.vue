@@ -34,30 +34,33 @@
         </transition>
       </div>
     </div>
-    <div class="shopcart-list" v-show="listShow">
-      <div class="list-header">
-        <h1 class="title">购物车</h1>
-        <span class="empty">清空</span>
+    <transition name="fade">
+      <div class="shopcart-list" v-show="listShow()">
+        <div class="list-header">
+          <h1 class="title">购物车</h1>
+          <span class="empty">清空</span>
+        </div>
+        <div class="list-content" ref="listCotent">
+          <ul>
+            <li v-for="(food,index) in selectFoods" class="food" :key="index">
+              <span class="name">{{food.name}}</span>
+              <div class="price">
+                <span>￥{{food.price*food.count}}</span>
+              </div>
+              <div class="cartcontrol-wrapper">
+                <cartcontrol :food="food"></cartcontrol>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="list-content">
-        <ul>
-          <li v-for="food in selectFoods" class="food" :key="food.id">
-            <span class="name">{{food.name}}</span>
-            <div class="price">
-              <span>￥{{food.price*food.count}}</span>
-            </div>
-            <div class="cartcontrol-wrapper">
-              <cartcontrol :food="food"></cartcontrol>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import cartcontrol from 'components/cartcontrol/cartcontrol';
+  import cartcontrol from 'components/cartcontrol/cartcontrol';
+  import BScroll from 'better-scroll';
 
   export default {
     props: {
@@ -88,7 +91,7 @@ import cartcontrol from 'components/cartcontrol/cartcontrol';
           {show: false}
         ],
         dropBalls: [],
-        fold: true
+        fold: false
       };
     },
     computed: {
@@ -122,15 +125,26 @@ import cartcontrol from 'components/cartcontrol/cartcontrol';
         } else {
           return 'enough';
         }
-      },
-      listShow() {
-        if (!this.totalCount) {
-          this.fold = true;
-          return false;
-        }
-        let show = !this.fold;
-        return show;
       }
+      // listShow() {
+      //   if (!this.totalCount) {
+      //     this.fold = true;
+      //     return false;
+      //   }
+      //   let show = !this.fold;
+      //   if (show) {
+      //     this.$nextTick(() => {
+      //       if (!this.scroll) {
+      //         this.scroll = new BScroll(this.$refs.listCotent, {
+      //           click: true
+      //         });
+      //       } else {
+      //         this.scroll.refresh();
+      //       }
+      //     });
+      //   }
+      //   return show;
+      // }
     },
     methods: {
       drop(el) {
@@ -182,10 +196,29 @@ import cartcontrol from 'components/cartcontrol/cartcontrol';
         }
       },
       toggleList() {
-        if (this.totalCount) {
+        if (!this.totalCount) {
           return;
         }
         this.fold = !this.fold;
+      },
+      listShow() {
+        if (!this.totalCount) {
+          this.fold = true;
+          return false;
+        }
+        let show = !this.fold;
+        if (show) {
+          this.$nextTick(() => {
+            if (!this.scroll) {
+              this.scroll = new BScroll(this.$refs.listCotent, {
+                click: true
+              });
+            } else {
+              this.scroll.refresh();
+            }
+          });
+        }
+        return show;
       }
     },
     components: {
@@ -195,6 +228,7 @@ import cartcontrol from 'components/cartcontrol/cartcontrol';
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import '../../common/stylus/mixin.styl'
   .shopcart
     position: fixed;
     left: 0
@@ -296,5 +330,56 @@ import cartcontrol from 'components/cartcontrol/cartcontrol';
           border-radius: 50%
           background: rgb(0, 160, 220);
           transition: all 0.4s linear
-
+    .shopcart-list
+      position: absolute
+      left: 0
+      top: 0
+      z-index: -1
+      width: 100%
+      transition: all 0.5s
+      transform: translate3d(0, -100%, 0);
+      &.fade-enter, &.fade-leave
+        transform: translate3d(0, 0, 0);
+      &.fade-leave-active, &.fade-leave-to
+        transform: translate3d(0, 0, 0);
+      .list-header
+        height: 40px
+        line-height: 40px
+        padding: 0 18px
+        background: #f3f5f7
+        border-bottom: 1px solid rgba(7, 17, 27, 0.1);
+        .title
+          float: left
+          font-size: 14px
+          color: rgb(7, 17, 27)
+        .empty
+          float: right
+          font-size: 12px
+          color: rgb(0, 160, 220);
+      .list-content
+        padding: 0 18px
+        max-height: 217px
+        background: #fff
+        overflow: hidden
+        .food
+          position: relative
+          padding: 12px
+          box-sizing: border-box
+          border-1px(rgba(7, 17, 27, 0.1))
+          .name
+            line-height: 24px
+            font-size: 14px
+            color: rgb(7, 17, 27)
+          .price
+            position: absolute
+            right: 90px
+            bottom: 12px
+            line-height: 24px
+            font-size: 12px
+            font-weight: 700
+            color: rgb(240, 20, 20)
+          .cartcontrol-wrapper
+            position: absolute
+            right: 0
+            bottom: 6px
 </style>

@@ -28,6 +28,12 @@ module.exports = {
     'semi': ['error', 'always'],
     'no-tabs': 0,
     'indent': 0,
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    "no-unused-vars": [2, {
+    // 允许声明未使用变量
+    "vars": "local",
+    // 参数不检查
+    "args": "none"
+  }],
   }
 }
