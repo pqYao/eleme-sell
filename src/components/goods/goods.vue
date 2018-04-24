@@ -3,7 +3,7 @@
     <div class="meun-wrapper" ref="meunWrapper">
       <ul>
         <li v-for="(item,index) in goods" class="meun-item" :class="{'current':currentIndex===index}"
-        :key='item.id' @click="selectMenu(index)">
+        :key='item.id' @click="selectMenu(index,$event)">
           <span class="text border-1px">
             <span class="icon" v-show='item.type>0' :class="classMap[item.type]"></span>
             {{item.name}}
@@ -16,7 +16,7 @@
         <li v-for="item in goods" class="food-list food-list-hook" :key='item.id'>
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li @click="selectFood(food)" v-for="food in item.foods" class="food-item" :key="food.id">
+            <li @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item" :key="food.id">
               <div class="icon">
                 <img :src="food.icon" alt=""  width="57">
               </div>
