@@ -14,29 +14,50 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <!-- 包裹动态组件时，会缓存不活动的组件实例，而不是销毁它们 -->
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import {urlParse} from './common/js/util';
   import header from 'components/header/header.vue';
   const ERR_OK = 0;
+  const debug = process.env.NODE_ENV !== 'production';
+
   export default {
 //  name: 'App'
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            console.log(queryParam);
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller').then((response) => {
-        response = response.body;
-        console.log(response);
-        if (response.errno === ERR_OK) {
-          this.seller = response.data;
-          console.log(this.seller);
-        }
-      });
+      // this.$http.get('/api/seller?id=' + this.seller.id).then((response) => {
+      //   response = response.body;
+      //   console.log(response);
+      //   if (response.errno === ERR_OK) {
+      //     this.seller = response.data;
+      //     console.log(this.seller);
+      //
+      //   }
+      // });
+      const url = debug ? '/api/seller' : 'http://ustbhuangyi.com/sell/api/seller';
+      this.$http.get(url + '?id=' + this.seller.id).then((response) => {
+       response = response.body;
+       if (response.errno === ERR_OK) {
+         this.seller = Object.assign({}, this.seller, response.data);
+         console.log(this.seller.id);
+       }
+     });
     },
     components: {
       'v-header': header
