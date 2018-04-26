@@ -25,7 +25,7 @@
   import {urlParse} from './common/js/util';
   import header from 'components/header/header.vue';
   const ERR_OK = 0;
-  const debug = process.env.NODE_ENV !== 'production';
+  // const debug = process.env.NODE_ENV !== 'production';
 
   export default {
 //  name: 'App'
@@ -41,23 +41,23 @@
       };
     },
     created() {
-      // this.$http.get('/api/seller?id=' + this.seller.id).then((response) => {
-      //   response = response.body;
-      //   console.log(response);
-      //   if (response.errno === ERR_OK) {
-      //     this.seller = response.data;
-      //     console.log(this.seller);
-      //
-      //   }
-      // });
-      const url = debug ? '/api/seller' : 'http://ustbhuangyi.com/sell/api/seller';
-      this.$http.get(url + '?id=' + this.seller.id).then((response) => {
-       response = response.body;
-       if (response.errno === ERR_OK) {
-         this.seller = Object.assign({}, this.seller, response.data);
-         console.log(this.seller.id);
-       }
-     });
+      this.$http.get('/api/seller?id=' + this.seller.id).then((response) => {
+        response = response.body;
+        console.log(response);
+        if (response.errno === ERR_OK) {
+          this.seller = Object.assign({}, this.seller, response.data);
+          console.log(this.seller);
+          console.log(this.seller.id);
+        }
+      });
+     //  const url = debug ? '/api/seller' : 'http://ustbhuangyi.com/sell/api/seller';
+     //  this.$http.get(url + '?id=' + this.seller.id).then((response) => {
+     //   response = response.body;
+     //   if (response.errno === ERR_OK) {
+     //     this.seller = Object.assign({}, this.seller, response.data);
+     //     console.log(this.seller.id);
+     //   }
+     // });
     },
     components: {
       'v-header': header
